@@ -18,13 +18,13 @@ class BattleshipGame
   end
 
   def switch_player
-    @curr = (curr == 0 ) ? 1 : 0
+    @curr = (@curr == 0 ) ? 1 : 0
   end
 
   def attack(pos)
     val = false
-    val = true if @board[pos] == :s
-    @board[pos] = :x
+    val = true if @boards[@curr][pos] == :s
+    @boards[@curr][pos] = :x
     val
   end
 
@@ -40,9 +40,9 @@ class BattleshipGame
     pos = [0,0]
 
     loop do
-      pos = @player.get_play
-      if @board.in_range?(pos)
-        if @board[pos] == :x
+      pos = @players[@curr].get_play
+      if @boards[@curr].in_range?(pos)
+        if @boards[@curr][pos] == :x
           puts "Position has already been fired at"
           next
         else
@@ -52,23 +52,29 @@ class BattleshipGame
         puts "Invalid location"
       end
     end
-    attack(pos)
+    puts %x{clear}
+    if attack(pos)
+      return true
+    else
+      @boards[@curr][pos] = :o
+      return false
+    end
   end
 
   def play
-    @board.populate_grid
-    @board2.populate_grid
+    num_ships = rand(25) + 5
+    @boards.each {|board| board.populate_grid(num_ships)}
     while !game_over?
-      @board.display
-      puts "\n\nThere are #{self.count} ships remaining\n\n"
-      if play_turn
-        puts "\n\nYou sunk my battleship!\n\n\n"
-      else
-        puts "\n\nMiss!\n\n"
-      end
+      puts "#{@players[@curr].name}'s turn!\n\n"
+      @boards[@curr].display
+      puts "\n\nThere are #{@boards[@curr].count} ships remaining\n\n"
+      puts play_turn ? "You sunk my battleship!\n\n\n" : "Miss!\n\n\n"
+      switch_player if @player2
     end
+    switch_player if @player2
     puts "\nGame Over!\n\n"
-    @board.display
+    puts "#{@players[@curr].name} Won!\n\n"
+    @boards[@curr].display
   end
 end
 
@@ -84,13 +90,15 @@ if __FILE__ == $PROGRAM_NAME
   end
   case ans
   when "1"
-    game = BattleshipGame.new
+    game = BattleshipGame.new(HumanPlayer.new("Player 1"))
   when "2"
-    game = BattleshipGame.new(HumanPlayer.new, Board.new, HumanPlayer.new)
+    game = BattleshipGame.new(HumanPlayer.new("Player 1"),
+            Board.new, HumanPlayer.new("Player 2"))
   when "c"
-    game = BattleshipGame.new(HumanPlayer.new, Board.new, ComputerPlayer.new)
+    game = BattleshipGame.new(HumanPlayer.new("Player 1"), Board.new, ComputerPlayer.new)
   when "C"
     game = BattleshipGame.new(ComputerPlayer.new)
   end
+  puts %x{clear}
   game.play
 end

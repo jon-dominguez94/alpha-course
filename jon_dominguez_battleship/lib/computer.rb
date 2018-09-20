@@ -1,5 +1,7 @@
 class ComputerPlayer
 
+  attr_reader :name
+
   def initialize(name="CPU")
     @name = name
     @tries = []
