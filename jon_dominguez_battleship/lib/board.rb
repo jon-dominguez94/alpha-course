@@ -72,11 +72,12 @@ class Board
     true
   end
 
-  def populate_grid
+  def populate_grid(num)
+    # moved size restrictions to battleship.rb
     # only populate with 5-(max/5) to prevent having too many ships
-    squares = @grid.length * @grid[0].length
-    ships = rand(squares/5) + 5
-    ships.times do
+    #squares = @grid.length * @grid[0].length
+    #ships = rand(squares/5) + 5
+    num.times do
       begin
         place_random_ship
       rescue
@@ -103,6 +104,8 @@ class Board
       contents = "| #{letters[i]} |"
       row.each do |el|
         val = el || " "
+        #uncomment next line when finished
+        #val = " " if val == :s
         contents += " #{val} |"
       end
       puts contents
