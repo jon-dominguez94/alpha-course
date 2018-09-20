@@ -86,7 +86,7 @@ class Board
     end
   end
 
-  def display
+  def display(flag=false)
     # display col labels
     nums = ("1".."26").to_a
     labels = "|   |"
@@ -105,12 +105,90 @@ class Board
       row.each do |el|
         val = el || " "
         #uncomment next line when finished
-        #val = " " if val == :s
+        if flag
+          val = " " if val == :s
+        end
         contents += " #{val} |"
       end
       puts contents
       puts underline
     end
+  end
+
+  def place_ships
+    ships = {
+      "Aircraft Carrier" => 5,
+      "Battleship" => 4,
+      "Submarine" => 3,
+      "2nd Submarine" => 3,
+      "Destroyer" => 3,
+      "2nd Destroyer " => 3,
+      "Patrol Boat" => 2,
+      "2nd Patrol Boat" => 2,
+      "3rd Patrol Boat" => 2,
+    }
+    ships.each do |k, v|
+      loop do
+        self.display
+        puts "\n\nPlace your #{k}. It takes up #{v} tiles\n\n"
+        options = []
+        pos = get_pos
+        if in_range?(pos)
+          options << pos
+          puts "Right(r) or Down(d)?"
+          ans = gets.chomp.strip
+          if ["r", "d"].include?(ans)
+            options << ans
+          else
+            puts "Invalid response\n\n"
+            next
+          end
+        else
+          puts "Invalid location\n\n"
+          next
+        end
+        if insert_ship(options[0], options[1], v)
+          puts %x{clear}
+          break
+        else
+          puts "Ship cannot be placed there! Try again\n\n"
+        end
+      end
+    end
+  end
+
+  def insert_ship(pos, dir, size)
+    positions = [pos]
+    row, col = pos
+    (size-1).times do
+      if dir ==  "r"
+        col += 1
+      else
+        row += 1
+      end
+      positions << [row, col]
+    end
+    positions.each do |curr|
+      if !in_range?(curr) || self[curr] == :s
+        return false
+      end
+    end
+    positions.each {|curr| self[curr] = :s}
+    return true
+  end
+
+  def get_pos
+    puts "Choose a starting position. Ex: A 10"
+    ans = gets.chomp.split
+    row = ans[0].upcase
+    col = ans[1].to_i
+    pos = convert(row, col)
+  end
+
+  def convert(row, col)
+    r_idx = ("A".."J").to_a.index(row)
+    c_idx = (1..10).to_a.index(col)
+    [r_idx, c_idx]
   end
 
 end
