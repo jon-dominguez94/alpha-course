@@ -42,7 +42,7 @@ class BattleshipGame
     loop do
       pos = @players[@curr].get_play
       if @boards[@curr].in_range?(pos)
-        if @boards[@curr][pos] == :x
+        if @boards[@curr][pos] == :x || @boards[@curr][pos] == :o
           puts "Position has already been fired at"
           next
         else
@@ -61,33 +61,63 @@ class BattleshipGame
     end
   end
 
+  def self.get_answer(string, vals)
+    ans = ""
+    loop do
+      puts string
+      ans = gets.chomp.strip
+      break if vals.include?(ans)
+      puts"Invalid Option"
+    end
+    puts %x{clear}
+    ans
+  end
+
   def play
     num_ships = rand(25) + 5
-    @boards.each {|board| board.populate_grid(num_ships)}
+    if @player2 && @player2.name != "CPU"
+      ans = BattleshipGame.get_answer("Random 1-Tile Ships(r) or Place Your Own(o)?",
+          ["r", "o"])
+      case ans
+      when "r"
+        @boards.each {|board| board.populate_grid(num_ships)}
+      when "o"
+        puts "Player 1, place your ships\n\n"
+        @board2.place_ships
+        puts "Player 2, place your ships\n\n"
+        @board.place_ships
+
+      end
+    else
+      @boards.each {|board| board.populate_grid(num_ships)}
+    end
+
     while !game_over?
       puts "#{@players[@curr].name}'s turn!\n\n"
-      @boards[@curr].display
-      puts "\n\nThere are #{@boards[@curr].count} ships remaining\n\n"
-      puts play_turn ? "You sunk my battleship!\n\n\n" : "Miss!\n\n\n"
+      @boards[@curr].display(true)
+      puts "\n\nThere are #{@boards[@curr].count} live ship tiles remaining\n\n"
+      puts play_turn ? "#{@players[@curr].name} Hit!\n\n\n" :
+                        "#{@players[@curr].name} Missed!\n\n\n"
       switch_player if @player2
     end
     switch_player if @player2
     puts "\nGame Over!\n\n"
     puts "#{@players[@curr].name} Won!\n\n"
+    puts "Their ships:"
     @boards[@curr].display
+    if @player2
+      switch_player
+      puts "\n\nYour ships:"
+      @boards[@curr].display
+    end
+
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  ans = ""
   puts "\n\nWelcome to Battleship!\n\n"
-  vals = ["1", "2", "C", "c"]
-  loop do
-    puts "1 player(1), 2 players(2), vs Computer(c) or Computer Simulation(C)?"
-    ans = gets.chomp.strip
-    break if vals.include?(ans)
-    puts"Invalid Option"
-  end
+  string = "1 player(1), 2 players(2), vs Computer(c) or Computer Simulation(C)?"
+  ans = BattleshipGame.get_answer(string, ["1", "2", "C", "c"])
   case ans
   when "1"
     game = BattleshipGame.new(HumanPlayer.new("Player 1"))
@@ -99,6 +129,5 @@ if __FILE__ == $PROGRAM_NAME
   when "C"
     game = BattleshipGame.new(ComputerPlayer.new)
   end
-  puts %x{clear}
   game.play
 end
