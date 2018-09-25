@@ -2,36 +2,24 @@
 
 # Return the argument with all its lowercase characters removed.
 def destructive_uppercase(str)
-  lows = ("a".."z").to_a
-  str.each_char do |ch|
-    if lows.include?(ch)
-      str.delete!(ch)
-    end
-  end
-  str
-
+  result = ""
+  str.each_char {|ch| result << ch if ch < "a"}
+  result
 end
 
 # Return the middle character of a string. Return the middle two characters if
 # the word is of even length, e.g. middle_substring("middle") => "dd",
 # middle_substring("mid") => "i"
 def middle_substring(str)
-  mid = str.length/2
-  if str.length.odd?
-    return str[mid]
-  else
-    return str[mid-1] + str[mid]
-  end
-
+  mid = str.length / 2
+  str.length.odd? ? str[mid] : str[mid - 1] + str[mid]
 end
 
 # Return the number of vowels in a string.
 VOWELS = %w(a e i o u)
 def num_vowels(str)
   count = 0
-  str.each_char do |ch|
-    count += 1 if VOWELS.include?(ch)
-  end
+  str.each_char {|ch| count += 1 if VOWELS.include?(ch)}
   count
 end
 
@@ -39,9 +27,7 @@ end
 # of all whole numbers between 1 and the number itself. Assume the argument will
 # be > 0.
 def factorial(num)
-  f = 1
-  (2..num).each {|n| f *= n}
-  f
+  (1..num).to_a.reduce(:*)
 end
 
 
@@ -50,14 +36,10 @@ end
 # Write your own version of the join method. separator = "" ensures that the
 # default seperator is an empty string.
 def my_join(arr, separator = "")
-  result = ""
-  arr.each_with_index do |el, i|
-    result << el
-    unless i == arr.length - 1
-      result << separator
-    end
-  end
-  result
+  return "" if arr.empty?
+  joined_str = ""
+  arr[0...-1].each {|elem| joined_str << elem + separator}
+  joined_str << arr[-1]
 end
 
 # Write a method that converts its argument to weirdcase, where every odd
@@ -66,11 +48,7 @@ end
 def weirdcase(str)
   result = ""
   str.chars.each_with_index do |ch, i|
-    if i.odd?
-      result << ch.upcase
-    else
-      result << ch.downcase
-    end
+    result += i.odd? ? ch.upcase : ch.downcase
   end
   result
 end
@@ -80,11 +58,7 @@ end
 # my luck has desrever")
 def reverse_five(str)
   words = str.split
-  words.each do |word|
-    if word.length >= 5
-      word.reverse!
-    end
-  end
+  words.each {|word| word.reverse! if word.length >= 5}
   words.join(" ")
 end
 
@@ -93,21 +67,18 @@ end
 # integer with "buzz", and for each multiple of both 3 and 5, replace the
 # integer with "fizzbuzz".
 def fizzbuzz(n)
-  arr = []
-  (1..n).each do |i|
-    if i % 3 == 0
-      if i % 5 == 0
-        arr.push("fizzbuzz")
-      else
-        arr.push("fizz")
-      end
-    elsif i % 5 == 0
-      arr.push("buzz")
+  numbers = []
+  (1..n).each do |num|
+    if num % 3 == 0
+      value = (num % 5 == 0) ? "fizzbuzz" : "fizz"
+      numbers << value
+    elsif num % 5 == 0
+      numbers << "buzz"
     else
-      arr.push(i)
+      numbers << num
     end
   end
-  arr
+  numbers
 end
 
 
@@ -116,13 +87,7 @@ end
 # Write a method that returns a new array containing all the elements of the
 # original array in reverse order.
 def my_reverse(arr)
-  new_arr = []
-  i = arr.length - 1
-  while i >= 0
-    new_arr.push(arr[i])
-    i -= 1
-  end
-  new_arr
+  arr.reverse
 end
 
 # Write a method that returns a boolean indicating whether the argument is
@@ -133,17 +98,14 @@ end
 
 # Write a method that returns a sorted array of the factors of its argument.
 def factors(num)
-  facts = []
-  (1..num).each do |n|
-    facts << n if num % n == 0
-  end
-  facts
+  factors = []
+  (1..num/2).each {|n| factors << n if num % n == 0}
+  factors << num
 end
 
 # Write a method that returns a sorted array of the prime factors of its argument.
 def prime_factors(num)
-  facts = factors(num)
-  facts.select {|f| prime?(f)}
+  factors(num).select {|n| prime?(n)}
 end
 
 # Write a method that returns the number of prime factors of its argument.
@@ -157,18 +119,14 @@ end
 # Return the one integer in an array that is even or odd while the rest are of
 # opposite parity, e.g. oddball([1,2,3]) => 2, oddball([2,4,5,6] => 5)
 def oddball(arr)
-  odds = []
   evens = []
-  arr.each do |n|
-    if n.odd?
-      odds << n
+  odds = []
+  arr.each do |int|
+    if int.even?
+      evens << int
     else
-      evens << n
+      odds << int
     end
   end
-  if odds.length == 1
-    return odds[0]
-  else
-    return evens[0]
-  end
+  evens.length > 1 ? odds[0] : evens[0]
 end
