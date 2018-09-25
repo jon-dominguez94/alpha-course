@@ -38,7 +38,7 @@ end
 # (negative(-1) => -1, negative(1) => -1, negative(0) => 0)
 # HINT: use the abs method
 def negative(num)
-  (-1) * num.abs
+  num.abs*(-1)
 end
 
 
@@ -48,7 +48,7 @@ end
 # Assume the argument is an integer.
 # HINT: What is the return value of 142 % 10? How about 2 % 10?
 def last_digit(int)
-  int % 10
+  int%10
 end
 
 # Write a method that returns a boolean indicating whether
@@ -84,7 +84,7 @@ end
 # (the "fractional part") of the quotient.
 # (dec_remainder_of_two_floats(8.0, 5.0) => 0.6 because 8.0 / 5.0 => 1.6)
 def dec_remainder_of_two_floats(f_dividend, f_divisor)
-  f_dividend/f_divisor - (f_dividend/f_divisor).floor
+  (f_dividend / f_divisor) - (f_dividend.to_i / f_divisor.to_i)
 end
 
 # Write a method that returns the decimal remainder of dividing two integers.
@@ -103,5 +103,5 @@ end
 # Assume the arguments are integers.
 # HINT: Use dec_remainder_of_two_integers as a helper method
 def int_remainder_without_modulo(i_dividend, i_divisor)
-  (dec_remainder_of_two_integers(i_dividend, i_divisor) * i_divisor).round
+  (dec_remainder_of_two_integers(i_dividend, i_divisor)*i_divisor).round
 end
