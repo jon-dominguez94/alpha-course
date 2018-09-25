@@ -2,7 +2,7 @@
 
 # Write a method that returns the range of its argument (an array of integers).
 def range(arr)
-  arr.sort.last - arr.sort.first
+  arr.max - arr.min
 end
 
 # Write a method that returns a boolean indicating whether an array is in sorted
@@ -49,9 +49,12 @@ end
 # repeating letters. Capital letters count as repeats of lowercase ones, e.g.,
 # repeating_letters?("Aa") => true
 def repeating_letters?(str)
-  str.downcase.each_char {|ch| return true if str.downcase.count(ch) > 1}
+  i = 0
+  while i < str.length - 1
+   return true if str[i].downcase == str[i + 1].downcase
+   i += 1
+  end
   false
-
 end
 
 # Write a method that converts an array of ten integers into a phone number in
