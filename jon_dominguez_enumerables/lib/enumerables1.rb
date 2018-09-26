@@ -3,19 +3,19 @@
 # Define a method that returns an array of only the even numbers in its argument
 # (an array of integers).
 def get_evens(arr)
-  arr.select {|el| el.even?}
+  arr.select {|elem| elem.even?}
 end
 
 # Define a method that returns a new array of all the elements in its argument
 # doubled. This method should *not* modify the original array.
 def calculate_doubles(arr)
-  arr.map {|el| el*2}
+  arr.map {|num| num*2}
 end
 
 # Define a method that returns its argument with all the argument's elements
 # doubled. This method should modify the original array.
 def calculate_doubles!(arr)
-  arr.map! {|el| el*2}
+  arr.map! {|num| num*2}
 end
 
 # Define a method that returns the sum of each element in its argument
@@ -23,8 +23,7 @@ end
 # (9 * 1) + (7 * 2) = 0 + 9 + 14 = 23
 def array_sum_with_index(arr)
   return 0 if arr.empty?
-  arr.map!.with_index {|el, i| el * i}
-  arr.reduce(:+)
+  arr.map.with_index{|num, i| num * i}.reduce(:+)
 end
 
 # MEDIUM
@@ -47,8 +46,8 @@ end
 
 def num_factors(number)
   count = 0
-  (1..number).each {|num| count += 1 if number % num == 0}
-  count
+  (1..number/2).each {|num| count += 1 if number % num == 0}
+  count += 1
 end
 
 # HARD
@@ -62,8 +61,9 @@ end
 
 def ordered_vowel_word?(word)
   vowels = "aeiou"
-  w_vowels = word.chars.select {|ch| vowels.include?(ch)}
-  w_vowels == w_vowels.sort
+  words_vowels = []
+  word.each_char {|ch| words_vowels << ch if vowels.include?(ch)}
+  words_vowels.sort == words_vowels
 end
 
 # Given an array of numbers, return an array of all the products remaining when
@@ -79,8 +79,8 @@ end
 # 10, because you take out 3, leaving 1 * 2 * 5 6, because you take out 5,
 # leaving 1 * 2 * 3
 def products_except_me(numbers)
-  numbers.map.with_index {|num, i| array_product(numbers[0...i] + numbers[i+1..-1])}
-
+  numbers.map.with_index {|num, i| array_product(numbers[0...i] +
+    numbers[i+1..-1])}
 end
 
 def array_product(array)

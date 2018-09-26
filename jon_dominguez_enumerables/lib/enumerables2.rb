@@ -5,8 +5,7 @@ require 'byebug'
 # Define a method that returns the sum of all the elements in its argument (an
 # array of numbers).
 def array_sum(arr)
-  return 0 if arr.empty?
-  arr.reduce(:+)
+  arr.reduce(0) {|acc, num| acc + num}
 end
 
 # Define a method that returns a boolean indicating whether substring is a
@@ -19,28 +18,14 @@ end
 # Define a method that accepts a string of lower case words (no punctuation) and
 # returns an array of letters that occur more than once, sorted alphabetically.
 def non_unique_letters(string)
-  uniq_chars = []
-  string.chars.uniq.each {|ch| uniq_chars << ch if string.count(ch) > 1}
-  uniq_chars.delete(" ")
-  uniq_chars.sort
+  string.delete(" ").chars.uniq.select{|ch| string.count(ch) > 1}
 end
 
 # Define a method that returns an array of the longest two words (in order) in
 # the method's argument. Ignore punctuation!
 def longest_two_words(string)
-  punctuation = ",.:;?!"
-  string.delete!(punctuation)
-  first = ""
-  second = ""
-  string.split.each do |word|
-    if word.length > first.length
-      second = first
-      first = word
-    elsif word.length > second.length
-      second = word
-    end
-  end
-  [first, second]
+  words = string.split.sort_by {|word| word.length}
+  words.reverse[0..1]
 end
 
 # MEDIUM
@@ -48,8 +33,7 @@ end
 # Define a method that takes a string of lower-case letters and returns an array
 # of all the letters that do not occur in the method's argument.
 def missing_letters(string)
-  letters = ("a".."z").to_a
-  letters.reject {|ch| string.downcase.include?(ch)}
+  ("a".."z").to_a.select {|letter| !string.include?(letter)}
 end
 
 # Define a method that accepts two years and returns an array of the years
@@ -73,13 +57,16 @@ end
 # appear multiple times in a row and remove them. You may wish to write a helper
 # method no_repeats?
 def one_week_wonders(songs)
-  songs.select {|song| no_repeats?(song, songs)}.uniq
+  wonders = []
+  songs.each {|song| wonders << song if no_repeats?(song, songs)}
+  wonders.uniq
 end
 
 def no_repeats?(song_name, songs)
   songs.each_with_index do |song, i|
-    if song == song_name && songs[i + 1] == song_name
-      return false
+    next_song = songs[i + 1]
+    if song == song_name
+      return false if song == next_song
     end
   end
   true
@@ -91,12 +78,12 @@ end
 # wish to write the helper methods c_distance and remove_punctuation.
 
 def for_cs_sake(string)
-  punctuation = ",.:;?!"
-  string.delete!(punctuation)
-  words = string.split
-  c_words = words.select {|word| word.downcase.include?("c")}
+  string.delete!(".,-?;:!")
+  c_words = string.split.select {|word| word.include?("c")}
   return "" if c_words.empty?
-  c_words.sort_by {|word| c_distance(word.downcase)}.first
+  c_words_hash = {}
+  c_words.each {|word| c_words_hash[word] = c_distance(word)}
+  c_words_hash.select {|k,v| v == c_words_hash.values.min}.first.first
 end
 
 def c_distance(word)
@@ -109,22 +96,15 @@ end
 # [[0, 1]] repeated_number_ranges([1, 2, 3, 3, 4, 4, 4]) => [[2, 3], [4, 6]]
 
 def repeated_number_ranges(arr)
-  curr = nil
-  first = nil
-  last = nil
-  result = []
-  arr.each_with_index do |n, i|
-    if n == curr
-      last = i
-    else
-      if first && last
-        result << [first, last]
-        last = nil
-      end
-      curr = n
-      first = i
+  start_idx = nil
+  repeat_indices = []
+  arr.each_with_index do |num, i|
+    if num == arr[i + 1]
+      start_idx = i if !start_idx
+    elsif start_idx
+      repeat_indices << [start_idx, i]
+      start_idx = nil
     end
   end
-  result << [first,last] if first && last
-  result
+  repeat_indices
 end
