@@ -5,11 +5,6 @@
 # not as an array) using the splat operator. If the user doesn't supply the
 # block, it should raise an error and print out "NO BLOCK GIVEN!".
 #
-
-def eval_block(*args, &prc)
-  puts "NO BLOCK GIVEN!" if !block_given?
-  prc.call(*args)
-end
 # To take possibly multiple arguments, check out the Ruby
 # splat operator: http://kconrails.com/2010/12/22/rubys-splat-operator
 #
@@ -50,3 +45,7 @@ end
 # eval_block(1, 2, 3)
 # # => "NO BLOCK GIVEN"
 # ```
+def eval_block(*args, &prc)
+  raise "No block" if !block_given?
+  prc.call(*args)
+end

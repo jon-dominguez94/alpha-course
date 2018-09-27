@@ -1,6 +1,6 @@
-def measure(n=1, &prc)
+def measure(iterations=1)
   beginning = Time.now
-  n.times {prc.call}
+  iterations.times {yield}
   ending = Time.now
-  (ending - beginning)/n
+  (ending - beginning)/iterations
 end
