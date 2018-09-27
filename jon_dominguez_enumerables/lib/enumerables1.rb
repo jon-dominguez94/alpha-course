@@ -61,8 +61,7 @@ end
 
 def ordered_vowel_word?(word)
   vowels = "aeiou"
-  words_vowels = []
-  word.each_char {|ch| words_vowels << ch if vowels.include?(ch)}
+  words_vowels = word.chars.select {|ch| vowels.include?(ch)}
   words_vowels.sort == words_vowels
 end
 

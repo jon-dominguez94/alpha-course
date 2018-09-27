@@ -57,17 +57,12 @@ end
 # appear multiple times in a row and remove them. You may wish to write a helper
 # method no_repeats?
 def one_week_wonders(songs)
-  wonders = []
-  songs.each {|song| wonders << song if no_repeats?(song, songs)}
-  wonders.uniq
+  wonders = songs.select {|song| no_repeats?(song, songs)}.uniq
 end
 
 def no_repeats?(song_name, songs)
   songs.each_with_index do |song, i|
-    next_song = songs[i + 1]
-    if song == song_name
-      return false if song == next_song
-    end
+    return false if (song == song_name && song == songs[i+1])
   end
   true
 end
