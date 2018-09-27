@@ -47,22 +47,20 @@ end
 # http://stackoverflow.com/questions/827649/what-is-the-ruby-spaceship-operator
 
 class Array
-  def bubble_sort!(&prc)
+  def bubble_sort!
     swapped = true
     until swapped == false
       swapped = false
       self.each_index do |i|
         if i < self.length - 1
-          if !block_given?
-            if self[i] > self[i + 1]
-              self[i], self[i + 1] = self[i + 1], self[i]
+          if block_given?
+            if yield(self[i], self[i+1]) == 1
               swapped = true
+              self[i], self[i+1] = self[i+1], self[i]
             end
-          else
-            if prc.call(self[i], self[i + 1]) == 1
-              self[i], self[i + 1] = self[i + 1], self[i]
-              swapped = true
-            end
+          elsif self[i] > self[i+1]
+            self[i], self[i+1] = self[i+1], self[i]
+            swapped = true
           end
         end
       end
@@ -89,29 +87,17 @@ end
 # words).
 
 def substrings(string)
-  result = []
-=begin
-  i = 0
-  while i < string.length
-    result << string[i]
-    j = i + 1
-    while j < string.length
-      result << string[i..j]
-      j += 1
-    end
-    i += 1
-  end
-=end
+  substrs = []
   string.chars.each_index do |i|
     (i..string.length).each do |j|
-      result << string[i..j]
+      substrs << string[i..j]
     end
   end
-  result.uniq
+  substrs.uniq
 end
 
 def subwords(word, dictionary)
-  substrings(word).select{|word| dictionary.include?(word)}
+  substrings(word).select {|string| dictionary.include?(string)}
 end
 
 # ### Doubler
@@ -171,27 +157,25 @@ end
 
 class Array
   def my_map(&prc)
-    result = []
+    mapped_array = []
     self.my_each do |el|
-      result << prc.call(el)
+      mapped_array << prc.call(el)
     end
-    result
+    mapped_array
   end
 
   def my_select(&prc)
-    result = []
-    self.my_each do |el|
-      result << el if prc.call(el) == true
-    end
-    result
+    selected = []
+    self.my_each {|el| selected << el if prc.call(el)}
+    selected
   end
 
   def my_inject(&blk)
-    acc = self.shift
-    self.my_each do |el|
-      acc = blk.call(acc, el)
+    accumulator = self.first
+    self[1..-1].my_each do |el|
+      accumulator = blk.call(accumulator, el)
     end
-    acc
+    accumulator
   end
 end
 
@@ -205,5 +189,5 @@ end
 # ```
 
 def concatenate(strings)
-  strings.inject {|acc, el| acc + el}
+  strings.inject(:+)
 end
