@@ -4,9 +4,7 @@
 # factors of a given number.
 
 def factors(num)
-  factors = []
-  (1..num/2).each {|n| factors << n if num % n == 0}
-  factors << num
+  (1..num).select {|n| num % n == 0}
 end
 
 # ### Bubble Sort
@@ -91,10 +89,8 @@ end
 def substrings(string)
   substrs = []
   string.chars.each_index do |i|
-    j = 0
-    while (j+i) < string.length
-      substrs << string[i..(j+i)]
-      j += 1
+    (i..string.length).each do |j|
+      substrs << string[i..j]
     end
   end
   substrs.uniq

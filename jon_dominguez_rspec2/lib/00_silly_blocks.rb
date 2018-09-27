@@ -1,12 +1,10 @@
 def reverser(&prc)
   string = prc.call
-  words = string.split
-  words.map {|word| word.reverse}.join(" ")
+  string.split.map {|word| word.reverse}.join(" ")
 end
 
 def adder(add=1)
-  num = yield
-  num + add
+  yield + add
 end
 
 def repeater(n=1)
