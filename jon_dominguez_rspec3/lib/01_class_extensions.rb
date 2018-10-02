@@ -18,17 +18,20 @@
 
 class String
   def caesar(shift)
+    upper_idx = []
+    self.chars.each_index {|i| upper_idx << i if self[i].is_upper?}
     shift %= 26
-    caps = ("A".."Z").to_a
-    lows = ("a".."z").to_a
-    ords = self.chars.map do |ch|
-      num = ch.ord + shift
-      if (caps.include?(ch) && num > 90) || (lows.include?(ch) && num > 122)
-        num -= 26
-      end
-      num.chr
+    ords = self.downcase.chars.map do |ch|
+      new_ord = ch.ord + shift
+      new_ord > "z".ord ? new_ord - 26 : new_ord
     end
+    ords.map! {|ord| ord.chr}
+    upper_idx.each {|i| ords[i].upcase!}
     ords.join
+  end
+
+  def is_upper?
+    self == self.upcase
   end
 end
 
@@ -47,26 +50,11 @@ end
 
 class Hash
   def difference(other_hash)
-=begin
-    result = {}
-    self.each do |k,v|
-      unless other_hash.key?(k)
-        result[k] = v
-      end
-    end
-    other_hash.each do |k,v|
-      unless self.key?(k)
-        result[k] = v
-      end
-    end
-    result
-=end
-    keys = self.keys.select{|k| !other_hash.key?(k)} + other_hash.keys.select{|k| !self.key?(k)}
-    result = {}
-    keys.each do |k|
-      result[k] = self[k] || other_hash[k]
-    end
-    result
+    diff_hash = {}
+    diff_keys = (self.keys | other_hash.keys) - (
+      self.keys & other_hash.keys)
+    diff_keys.each {|key| diff_hash[key] = self[key] || other_hash[key]}
+    diff_hash
   end
 end
 
@@ -129,19 +117,22 @@ end
 
 class Fixnum
   def stringify(base)
-    convert = {0=>"0", 1=>"1", 2=>"2",
-              3=>"3", 4=>"4", 5=>"5",
-              6=>"6", 7=>"7", 8=>"8",
-              9=>"9", 10=>"A", 11=>"B",
-              12=>"C", 13=>"D", 14=>"E",
-              15=>"F"}
-    result = []
+    translation = {
+                  0=>"0", 1=>"1", 2=>"2",
+                  3=>"3", 4=>"4", 5=>"5",
+                  6=>"6", 7=>"7", 8=>"8",
+                  9=>"9", 10=>"A", 11=>"B",
+                  12=>"C", 13=>"D", 14=>"E",
+                  15=>"F"
+                  }
+    stringified = []
     pow = 0
-    until self / (base**pow) == 0
-      result.unshift(convert[(self/base**pow) % base])
+    until self / (base ** pow) == 0
+      value = (self / (base ** pow) % base)
+      stringified.unshift(translation[value])
       pow += 1
     end
-    result.join.downcase
+    stringified.join.downcase
   end
 end
 

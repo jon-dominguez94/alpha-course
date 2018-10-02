@@ -1,3 +1,5 @@
+require 'byebug'
+
 # Sum
 #
 # Write an Array method, `sum`, that returns the sum of the elements in the
@@ -5,8 +7,7 @@
 
 class Array
   def sum
-    return 0 if self.empty?
-    self.reduce(:+)
+    self.reduce(0) {|acc, el| acc + el}
   end
 end
 
@@ -18,11 +19,11 @@ end
 
 class Array
   def square!
-    self.map! {|el| el*el}
+    self.map! {|el| el**2}
   end
 
   def square
-    self.map {|el| el*el}
+    self.map {|el| el**2}
   end
 end
 
@@ -40,9 +41,9 @@ end
 
 class Array
   def my_uniq
-    arr = []
-    self.each {|el| arr << el if !arr.include?(el)}
-    arr
+    uniq_elems = []
+    self.each {|el| uniq_elems << el if !uniq_elems.include?(el)}
+    uniq_elems
   end
 end
 
@@ -64,15 +65,13 @@ end
 
 class Array
   def two_sum
-    result = []
-    self.each_with_index do |num,i|
+    spots = []
+    self.each_with_index do |el, i|
       (i+1...self.length).each do |j|
-        if num + self[j] == 0
-          result << [[i,j].min, [i,j].max]
-        end
+        spots << [i,j] if el + self[j] == 0
       end
     end
-    result
+    spots
   end
 end
 
@@ -86,10 +85,10 @@ end
 class Array
   def median
     return nil if self.empty?
-    arr = self.sort
-    mid = arr.length/2
-    return arr[mid] if arr.length.odd?
-    (arr[mid] + arr[mid-1])/2.0
+    sorted = self.sort
+    mid = sorted.length/2
+    return sorted[mid] if sorted.length.odd?
+    return (sorted[mid-1] + sorted[mid])/2.0
   end
 end
 
@@ -142,13 +141,15 @@ end
 
 class Array
   def my_transpose
-    result = Array.new(self[0].length){Array.new(self.length)}
-    (0...self[0].length).each do |i|
-      (0...self.length).each do |j|
-        result[i][j] = self[j][i]
+    rows = self[0].length
+    cols = self.length
+    transposed = Array.new(rows){Array.new(cols)}
+    self.each_with_index do |row, i|
+      row.each_index do |j|
+        transposed[j][i] = self[i][j]
       end
     end
-    result
+    transposed
   end
 end
 
