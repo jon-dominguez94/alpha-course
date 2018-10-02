@@ -3,15 +3,15 @@
 # Define a method that, given a sentence, returns a hash of each of the words as
 # keys with their lengths as values. Assume the argument lacks punctuation.
 def word_lengths(str)
-  lengths = {}
-  str.split.each {|word| lengths[word] = word.length}
-  lengths
+  words_with_lengths = {}
+  str.split.each {|word| words_with_lengths[word] = word.length}
+  words_with_lengths
 end
 
 # Define a method that, given a hash with integers as values, returns the key
 # with the largest value.
 def greatest_key_by_val(hash)
-  hash.sort_by {|k,v| v}.last.first
+  hash.sort_by {|k, v| v}.last.first
 end
 
 # Define a method that accepts two hashes as arguments: an older inventory and a
@@ -29,9 +29,9 @@ end
 # Define a method that, given a word, returns a hash with the letters in the
 # word as keys and the frequencies of the letters as values.
 def letter_counts(word)
-  letters = {}
-  word.chars.uniq {|ch| letters[ch] = word.count(ch)}
-  letters
+  char_counts = Hash.new(0)
+  word.chars.uniq.each {|ch| char_counts[ch] = word.count(ch)}
+  char_counts
 end
 
 # MEDIUM
@@ -39,23 +39,19 @@ end
 # Define a method that, given an array, returns that array without duplicates.
 # Use a hash! Don't use the uniq method.
 def my_uniq(arr)
-  uniq_els = {}
-  arr.each {|el| uniq_els[el] = 0}
-  uniq_els.keys
+  uniq_hash = {}
+  arr.each {|el| uniq_hash[el] = true}
+  uniq_hash.keys
 end
 
 # Define a method that, given an array of numbers, returns a hash with "even"
 # and "odd" as keys and the frequency of each parity as values.
 def evens_and_odds(numbers)
-  my_hash = {even:0, odd:0}
-  numbers.each do |n|
-    if n.odd?
-      my_hash[:odd] += 1
-    else
-      my_hash[:even] += 1
-    end
+  parity_count = {even: 0, odd: 0}
+  numbers.each do |num|
+    num.odd? ? parity_count[:odd] += 1 : parity_count[:even] += 1
   end
-  my_hash
+  parity_count
 end
 
 # Define a method that, given a string, returns the most common vowel. Do
@@ -63,10 +59,9 @@ end
 # lower case.
 def most_common_vowel(string)
   vowels = "aeiou"
-  count = Hash.new(0)
-  string.chars.uniq.each {|ch| count[ch] = string.count(ch)}
-  v_count = count.select {|k,v| vowels.include?(k)}
-  v_count.sort_by {|k,v| v}.last.first
+  vowel_count = Hash.new(0)
+  string.chars.each {|ch| vowel_count[ch] += 1 if vowels.include?(ch)}
+  vowel_count.sort_by {|k,v| v}.last.first
 end
 
 # HARD
@@ -79,12 +74,14 @@ end
 # fall_and_winter_birthdays(students_with_birthdays) => [ ["Bertie", "Dottie"],
 # ["Bertie", "Warren"], ["Dottie", "Warren"] ]
 def fall_and_winter_birthdays(students)
-  half2 = students.select {|k,v| v > 6}.keys
-  result = []
-  half2.each_with_index do |el, i|
-    (i+1...half2.length).each {|j| result << [el, half2[j]]}
+  combos = []
+  valid_students = students.select{|k,v| v > 6}.keys
+  valid_students.each_with_index do |el, i|
+    (i+1...valid_students.length).each do |j|
+      combos << [el, valid_students[j]]
+    end
   end
-  result
+  combos
 end
 
 # Define a method that, given an array of specimens, returns the biodiversity
@@ -93,10 +90,11 @@ end
 # "cat", "cat"]) => 1 biodiversity_index(["cat", "leopard-spotted ferret",
 # "dog"]) => 9
 def biodiversity_index(specimens)
-  count = Hash.new(0)
-  specimens.each {|spec| count[spec] += 1}
-  count.sort_by {|k,v| v}
-  count.length**2 * count.values.min / count.values.max
+  species_count = Hash.new(0)
+  specimens.each {|animal| species_count[animal] += 1}
+  left = species_count.keys.length ** 2
+  right = species_count.values.min / species_count.values.max
+  left * right
 end
 
 # Define a method that, given the string of a respectable business sign, returns
@@ -105,15 +103,16 @@ end
 # can_tweak_sign("We're having a yellow ferret sale for a good cause over at the
 # pet shop!", "Leopard ferrets forever yo") => true
 def can_tweak_sign?(normal_sign, vandalized_sign)
-  normal_count = character_count(normal_sign)
-  van_count = character_count(vandalized_sign)
-  van_count.keys.all? {|k| van_count[k] <= normal_count[k]}
+  vandalized_letters = character_count(vandalized_sign)
+  normal_letters = character_count(normal_sign)
+  vandalized_letters.each do |k,v|
+    return false if (!normal_letters[k] || normal_letters[k] < v)
+  end
+  true
 end
 
 def character_count(str)
-  count = Hash.new(0)
-  punctuation = ",.:;\'?!"
-  str.delete!(punctuation)
-  str.downcase.chars.each {|ch| count[ch] += 1}
-  count
+  char_count = Hash.new(0)
+  str.downcase.delete(",.?;:!-").chars.each {|ch| char_count[ch] += 1}
+  char_count
 end
