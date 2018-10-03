@@ -1,5 +1,4 @@
 class Dictionary
-  # TODO: your code goes here!
 
   attr_accessor :entries, :keywords
 
@@ -8,28 +7,30 @@ class Dictionary
     @keywords = []
   end
 
-  def add(ent)
-    if ent.is_a? Hash
-      @entries.merge!(ent) if
-      @keywords << ent.first.first
-    elsif ent.is_a? String
-      @entries[ent] = nil
-      @keywords << ent
+  def add(entry)
+    if entry.is_a? String
+      @entries[entry] = nil
+      @keywords << entry
+    elsif entry.is_a? Hash
+      @entries.merge!(entry)
+      @keywords << entry.first.first
     end
-    @keywords = @keywords.sort
+
+    @keywords.sort!
   end
 
   def include?(key)
-    keywords.include?(key)
+    @keywords.include?(key)
   end
 
-  def find(key)
-    @entries.select {|k,v| k.include?(key)}
+  def find(prefix)
+    @entries.select {|k,v| k.include?(prefix)}
   end
 
   def printable
-    string = []
-    @entries.sort.each {|k,v| string << "[#{k}] \"#{v}\""}
-    string.join("\n")
+    output_string = []
+    @keywords.each {|k| output_string << "[#{k}] \"#{@entries[k]}\""}
+    output_string.join("\n")
   end
+
 end

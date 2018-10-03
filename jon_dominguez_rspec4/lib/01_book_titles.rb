@@ -1,22 +1,14 @@
 class Book
-  # TODO: your code goes here!
-
   attr_accessor :title
 
   def initialize
     @title = ""
   end
 
-  def title=(name)
-    result = []
-    excep = ["a", "an", "and", "the", "to", "of", "in"]
-    name.split.each_with_index do |word, i|
-      if i != 0 && excep.include?(word.downcase)
-         result << word
-      else
-        result << word.capitalize
-      end
-    end
-    @title = result.join(" ")
+  def title=(full)
+    articles = ["a", "an", "and", "the", "of", "in", "to"]
+    words = full.split.map.with_index {|word, i|
+      (articles.include?(word) && i != 0) ? word : word.capitalize}
+    @title = words.join(" ")
   end
 end
