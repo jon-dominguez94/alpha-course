@@ -1,6 +1,4 @@
 class Temperature
-  # TODO: your code goes here!
-  attr_accessor :fahrenheit, :celsius
 
   def initialize(temp={})
     @fahrenheit = temp[:f]
@@ -8,29 +6,29 @@ class Temperature
   end
 
   def in_fahrenheit
-    return ctof(@celsius) if !fahrenheit
-    @fahrenheit
+    @fahrenheit ? @fahrenheit : ctof(@celsius)
   end
 
   def in_celsius
-    return ftoc(@fahrenheit) if !celsius
-    @celsius
+    @celsius ? @celsius : ftoc(@fahrenheit)
   end
 
-  def ctof(num)
-    1.8*num + 32
+  def self.from_celsius(celsius)
+    Temperature.new(:c => celsius)
   end
 
-  def ftoc(num)
-    (num-32) * 5.0 /9.0
+  def self.from_fahrenheit(fahrenheit)
+    Temperature.new(:f => fahrenheit)
   end
 
-  def self.from_celsius(num)
-    Temperature.new(:c => num)
+  private
+
+  def ftoc(fahrenheit)
+    (fahrenheit - 32) * (5.0/9.0)
   end
 
-  def self.from_fahrenheit(num)
-    Temperature.new(:f => num)
+  def ctof(celsius)
+    celsius * 1.8 + 32
   end
 
 end

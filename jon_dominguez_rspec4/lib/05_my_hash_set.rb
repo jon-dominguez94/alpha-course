@@ -1,5 +1,5 @@
 class MyHashSet
-  # TODO: your code goes here!
+
   attr_accessor :store
 
   def initialize
@@ -11,11 +11,15 @@ class MyHashSet
   end
 
   def include?(key)
-    @store.key?(key)
+    @store.keys.include?(key)
   end
 
   def delete(key)
-    @store.delete(key)
+    if self.include?(key)
+      @store.delete(key)
+      return true
+    end
+    false
   end
 
   def to_a
@@ -23,21 +27,24 @@ class MyHashSet
   end
 
   def union(set2)
-    result = self
-    set2.to_a.each {|k| result.insert(k)}
-    result
+    union = MyHashSet.new
+    keys = self.to_a | set2.to_a
+    keys.each {|key| union.insert(key)}
+    union
   end
 
   def intersect(set2)
-    result = MyHashSet.new
-    self.to_a.each {|key| result.insert(key) if set2.include?(key)}
-    result
+    intersection = MyHashSet.new
+    keys = self.to_a & set2.to_a
+    keys.each {|key| intersection.insert(key)}
+    intersection
   end
 
   def minus(set2)
-    result = self
-    self.to_a.each {|key| result.delete(key) if set2.include?(key)}
-    result
+    minus = MyHashSet.new
+    keys = self.to_a - set2.to_a
+    keys.each {|key| minus.insert(key)}
+    minus
   end
 
 end
