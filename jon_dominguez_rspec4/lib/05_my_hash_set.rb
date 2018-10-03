@@ -15,10 +15,7 @@ class MyHashSet
   end
 
   def delete(key)
-    if self.include?(key)
-      @store.delete(key)
-      return true
-    end
+    return @store.delete(key) if self.include?(key)
     false
   end
 

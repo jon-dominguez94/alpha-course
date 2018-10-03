@@ -12,7 +12,7 @@ class Dictionary
       @entries[entry] = nil
       @keywords << entry
     elsif entry.is_a? Hash
-      @entries = entry.merge(@entries)#[entry.first.first] = entry.first.last
+      @entries.merge!(entry)
       @keywords << entry.first.first
     end
 
@@ -28,9 +28,9 @@ class Dictionary
   end
 
   def printable
-    output_string = ""
-    @entries.each {|k,v| output_string += "[#{k}] \"#{v}\"\n"}
-    output_string.chomp
+    output_string = []
+    @keywords.each {|k| output_string << "[#{k}] \"#{@entries[k]}\""}
+    output_string.join("\n")
   end
 
 end
