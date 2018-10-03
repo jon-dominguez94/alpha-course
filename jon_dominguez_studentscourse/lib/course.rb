@@ -51,24 +51,26 @@
 
 class Course
 
-  attr_accessor :name, :department, :credits, :students, :days, :time_block
+  attr_reader :name, :department, :credits, :students, :days, :time_block
 
-  def initialize(name, dep, credits, days, time_block)
+  def initialize(name, department, credits, days, time_block)
     @name = name
-    @department = dep
+    @department = department
     @credits = credits
-    @students  = []
     @days = days
     @time_block = time_block
+    @students = []
   end
 
+
   def add_student(student)
-      student.enroll(self)
+    student.enroll(self)
   end
 
   def conflicts_with?(course2)
     same_days = self.days & course2.days
-    return true if self.time_block == course2.time_block && !same_days.empty?
-    false
+    (!same_days.empty? && (self.time_block == course2.time_block)) ?
+      true : false
   end
+
 end

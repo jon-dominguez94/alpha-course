@@ -2,33 +2,28 @@ class Student
 
   attr_accessor :first_name, :last_name, :courses
 
-  def initialize(fname, lname)
+  def initialize (fname, lname)
     @first_name = fname
     @last_name = lname
     @courses = []
-    "#{@first_name} #{@last_name}"
   end
 
   def name
     "#{@first_name} #{@last_name}"
   end
 
-  def has_conflict?(course2)
-    @courses.any? {|course| course.conflicts_with?(course2)}
-  end
-
   def enroll(course)
-    raise "Course conflicts with enrolled course" if has_conflict?(course)
-    if (!@courses.include?(course)) && (!course.students.include?(self))
-      @courses << course
-      course.students << self
+    if !@courses.include?(course)
+      raise "Course conflict" if @courses.any? {|c| c.conflicts_with?(course)}
+      @courses.push(course)
+      course.students.push(self)
     end
   end
 
   def course_load
-    result = Hash.new(0)
-    @courses.each {|course| result[course.department] += course.credits}
-    result
+    c_load = Hash.new(0)
+    @courses.each {|course| c_load[course.department] += course.credits}
+    c_load
   end
 
 end
