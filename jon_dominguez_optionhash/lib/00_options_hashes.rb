@@ -26,10 +26,8 @@ def transmogrify(string, options={})
   }
 
   options = defaults.merge(options)
-  result = ""
-  temp = string.dup
-  temp.upcase! if options[:upcase]
-  temp.reverse! if options[:reverse]
-  options[:times].times { result << temp }
-  result
+  result = string.dup
+  result.upcase! if options[:upcase]
+  result.reverse! if options[:reverse]
+  result*options[:times]
 end
